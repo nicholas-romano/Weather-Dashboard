@@ -71,3 +71,7 @@ p.card-subtitle {
 #forecast .card-text {
     font-size: 9pt;
 }
+
+#forecast-heading {
+    display: none;
+}

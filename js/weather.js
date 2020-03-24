@@ -4,6 +4,11 @@ var queryURL = "";
 $( document ).ready(function() {
     
     $("#search-city-name").on("click", function() {
+
+        $("#forecast-today").empty();
+        $("#forecast-heading").hide();
+        $("#forecast-tiles").empty();
+
         var city = $("#city-input").val();
         
         if (city === "") {
@@ -48,6 +53,8 @@ $( document ).ready(function() {
 
               getNext5Days(city_name);
 
+              $("#forecast-heading").show();
+
         });    
 
   });
@@ -81,9 +88,6 @@ function getNext5Days(city_name) {
           var forecastUpdateList = response.list;
 
           console.log("forecast: ", forecastUpdateList);
-
-          //Add 5-Day Forecast heading:
-          $("#forecast").prepend('<h4>5-Day Forecast</h4>');
 
           var day = 1;
 
