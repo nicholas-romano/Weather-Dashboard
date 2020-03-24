@@ -1,0 +1,73 @@
+body {
+    font-family: 'Lucida Grande', sans-serif;
+}
+
+header {
+    text-align: center;
+    background-color: #333;
+    color: white;
+    font-size: 24pt;
+    padding: 15px 0;
+}
+
+#search-section {
+    background-color: #eee;
+    padding: 15px;
+}
+
+#search-section h5 {
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+#city-info {
+    margin: 15px;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 22pt;
+}
+
+#title-date {
+    font-weight: normal;
+    font-size: 15pt;
+}
+
+.card img {
+    margin-left: 10px;
+}
+
+p.card-subtitle {
+    margin: 20px 0;
+    font-size: 11pt;
+}
+
+.badge.badge-danger {
+    padding: 10px;
+    font-weight: normal;
+}
+
+#forecast {
+    margin-top: 15px;
+}
+
+#forecast .card {
+    margin-bottom: 15px;
+    padding: -10px;
+    background-color: #007bff;
+    color: white;
+}
+
+#forecast .card-title {
+    font-size: 12pt;
+    font-weight: 900;
+}
+
+#forecast img {
+    margin-bottom: 10px;
+}
+
+#forecast .card-text {
+    font-size: 9pt;
+}

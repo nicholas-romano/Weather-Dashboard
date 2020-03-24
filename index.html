@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link href="css/reset.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link href="css/weather.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <main>
+        <div class="container-fluid">
+            <header>
+                <h1>Weather Dashboard</h1>
+            </header>
+            <section class="row">
+                <section class="col-sm-4">
+                    <div id="search-section">
+                        <h5>Search for a City:</h5>
+                        <div class="input-group mb-3">
+                            <input type="text" id="city-input" class="form-control" placeholder="City Name" aria-label="City Name" aria-describedby="city-name">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="search-city-name"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="col-sm-8">
+                    <div id="city-info">
+                        <div id="forecast-today">
+                            <h4>Enter a city in the search box on the left and click the search button.</h4>
+                        </div>
+                        <div id="forecast">
+                            <div id="forecast-tiles" class="row">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+          </div>  
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="js/weather.js" type="text/javascript"></script>
+</body>
+</html>
