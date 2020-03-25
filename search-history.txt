@@ -1,8 +1,9 @@
 <div class="card">
-                            <ul id="search-history" class="list-group list-group-flush">
-                                <li class="list-group-item">Raleigh</li>
-                                <li class="list-group-item">Atlanta</li>
-                                <li class="list-group-item">Chicago</li>
-                                <li class="list-group-item">New York</li>
-                            </ul>
-                        </div>
+    <ul id="search-history" class="list-group list-group-flush">
+    </ul>
+</div>
+
+                        <li class="list-group-item">Raleigh</li>
+                        <li class="list-group-item">Atlanta</li>
+                        <li class="list-group-item">Chicago</li>
+                        <li class="list-group-item">New York</li>

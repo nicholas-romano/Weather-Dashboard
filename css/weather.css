@@ -29,7 +29,7 @@ header {
     font-size: 22pt;
 }
 
-#title-date {
+#date {
     font-weight: normal;
     font-size: 15pt;
 }
@@ -74,4 +74,8 @@ p.card-subtitle {
 
 #forecast-heading {
     display: none;
+}
+
+.search-history-list:hover {
+    cursor: pointer;
 }
