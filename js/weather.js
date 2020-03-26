@@ -55,11 +55,21 @@ $( document ).ready(function() {
 
         //get the input submitted:
         var city = $("#city-input").val();
+
+        var validInput = validateInput(city);
         
         if (city === "") {
-          alert("Please enter a City name.");
+          $(".search").after('<label class="error">Please enter a city or state name.</label>');
         }
-        else {
+        else if (validInput === false) {
+          $(".error").remove();
+          $(".search").after('<label class="error">Invalid input. Must be alphabetical</label>');
+        }
+        else  {
+          $(".error").remove();
+        }
+
+        if (city !== "" && validInput === true) {
             queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=Imperial&appid=' + API_KEY; 
 
             $.ajax({
@@ -71,14 +81,35 @@ $( document ).ready(function() {
                 $("#forecast-today").html('<h4>City name not found!</h4>')
               }
             });
+        }
+        else {
+
+          var totalCities = window.localStorage.length;
+
+          if (totalCities > 0) {
+            //If input is invalid, display last searched city:
+            var activeCity = getData("active");
+            displaySearchHistoryItem(activeCity);
+          }
+          else {
+            $("#forecast-today").html("<h5>Enter a city in the search box on the left and click the search button.</h5>" +
+                                      "<h5>Local weather information will display here.</h5>");
+          }
         }  
 
     });
 
 });
 
+function validateInput(input) {
+  var rmSp = input.trim();
+  var result = rmSp.search(/^[A-Za-z\s]+$/); //check to make sure the input is alphabetical
+  return (result === 0 ? true : false); //return true if it is alphabetical, false if not
+}
+
 function emptySearchDisplay() {
   //remove previously searched display data:
+  cityDataObj = {};
   $("#forecast-today").empty();
   $("#forecast-heading").empty();
   $("#forecast-tiles").empty();
@@ -88,7 +119,7 @@ function handleSearchItemSelect() {
   //City name in search history list is selected:
   emptySearchDisplay();
   var city = $(this).attr("id");
-  console.log("city: " + city);
+  console.log("city clicked: " + city);
   displaySearchHistoryItem(city);
 }
 
@@ -126,7 +157,8 @@ function addSearchHistoryListItem(city) {
   }
 
   $("#search-history").append('<li id="' + city + '" class="list-group-item search-history-item">' + city + '</li>');
-  $(".search-history-item").on("click", handleSearchItemSelect);
+  
+  $('.search-history-item').on("click", handleSearchItemSelect);
 }
 
 function displaySearchHistoryItem(cityName) {
@@ -136,14 +168,17 @@ function displaySearchHistoryItem(cityName) {
   cityDataObj = getData(cityName);
   console.log("cityDataObj: ", cityDataObj);
 
+  //check if the city data object has 5 day forecast data:
+  if (cityDataObj.hasOwnProperty("forecast_day_1")) {
+    //if it has 5 day forecast data, add the heading:
+    $("#forecast-heading").text("5 Day Forecast");
+  }
+  else {
+    $("#forecast-heading").text("5 Day Forecast is not available");
+  }
+
   for (var property in cityDataObj){
     if(cityDataObj.hasOwnProperty(property)){
-
-      //check if the city data object has 5 day forecast data:
-      if (property === "forecast_day_1") {
-        //if it has 5 day forecast data, add the heading:
-        $("#forecast-heading").text("5 Day Forecast");
-      }
 
       //console.log(property + ": " + cityDataObj[property]);
       switch(property) {
@@ -270,7 +305,7 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
           }
           citiesData.push(cityDataObj);
           setData(city_name, cityDataObj);
-          setData("active", city);
+          setData("active", city_name);
         }  
     });
 

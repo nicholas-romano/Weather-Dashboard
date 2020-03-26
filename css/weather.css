@@ -80,6 +80,7 @@ p.card-subtitle {
     padding: -10px;
     background-color: #007bff;
     color: white;
+    min-height: 167px;
 }
 
 #forecast .card-title {
@@ -97,4 +98,9 @@ p.card-subtitle {
 
 .search-history-item:hover {
     cursor: pointer;
+}
+
+.error {
+    color: red;
+    font-size: 8pt;
 }
