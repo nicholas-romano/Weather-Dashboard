@@ -72,10 +72,6 @@ p.card-subtitle {
     font-size: 9pt;
 }
 
-#forecast-heading {
-    display: none;
-}
-
 .search-history-item:hover {
     cursor: pointer;
 }

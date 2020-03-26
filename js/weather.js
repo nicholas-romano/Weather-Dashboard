@@ -11,15 +11,24 @@ $( document ).ready(function() {
     if (totalCities > 0) {
 
       for (var i = 0; i < totalCities; i++) {
-        var cityName = window.localStorage.key(i);
-        var cityData = getData(cityName);
-        citiesData.push(cityData);
 
-        if (i === totalCities - 1) {
-          //display last city searched:
-          displaySearchHistoryItem(cityName);
+        //loop through all local storage keys:
+        var cityName = window.localStorage.key(i);
+        
+        //ignore the "active" localStorage key:
+        if (cityName !== "active") {
+
+          //store each city's data object in the citiesData array:
+          var cityData = getData(cityName);
+          citiesData.push(cityData);
+
         }
+        
       }
+
+      //display last searched city:
+      var activeCity = getData("active");
+      displaySearchHistoryItem(activeCity);
 
       console.log("citiesData: ", citiesData);
 
@@ -28,6 +37,8 @@ $( document ).ready(function() {
                                     '</ul>' +
                                   '</div>');
 
+      //loop through each city's data object in the citiesData array and output
+      //the city name into the search history list:                              
       $.each(citiesData, function(index, city) {
 
         addSearchHistoryListItem(city.name);
@@ -35,14 +46,14 @@ $( document ).ready(function() {
       });
     }
 
+    //add a click event to each search history city in the list:
     $(".search-history-item").on("click", handleSearchItemSelect);
     
     $("#search-city-name").on("click", function() {
 
-        $("#forecast-today").empty();
-        $("#forecast-heading").hide();
-        $("#forecast-tiles").empty();
+        emptySearchDisplay();
 
+        //get the input submitted:
         var city = $("#city-input").val();
         
         if (city === "") {
@@ -56,6 +67,7 @@ $( document ).ready(function() {
               method: "GET",
               success: setTodaysForecast,
               error: function() {
+                //City not found in the database, output error:
                 $("#forecast-today").html('<h4>City name not found!</h4>')
               }
             });
@@ -65,10 +77,16 @@ $( document ).ready(function() {
 
 });
 
+function emptySearchDisplay() {
+  //remove previously searched display data:
+  $("#forecast-today").empty();
+  $("#forecast-heading").empty();
+  $("#forecast-tiles").empty();
+}
+
 function handleSearchItemSelect() {
   //City name in search history list is selected:
-  $("#forecast-today").empty();
-  $("#forecast-tiles").empty();
+  emptySearchDisplay();
   var city = $(this).attr("id");
   console.log("city: " + city);
   displaySearchHistoryItem(city);
@@ -113,11 +131,20 @@ function addSearchHistoryListItem(city) {
 
 function displaySearchHistoryItem(cityName) {
 
+  setData("active", cityName);
+
   cityDataObj = getData(cityName);
   console.log("cityDataObj: ", cityDataObj);
 
   for (var property in cityDataObj){
     if(cityDataObj.hasOwnProperty(property)){
+
+      //check if the city data object has 5 day forecast data:
+      if (property === "forecast_day_1") {
+        //if it has 5 day forecast data, add the heading:
+        $("#forecast-heading").text("5 Day Forecast");
+      }
+
       //console.log(property + ": " + cityDataObj[property]);
       switch(property) {
         case 'name':
@@ -196,8 +223,6 @@ function setTodaysForecast(response) {
   //set UV Index:
   setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed);
 
-  $("#forecast-heading").show();
-
 }
 
 function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed) {
@@ -214,6 +239,7 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
           getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index);
         },
         error: function() {
+            //UV index is not available:
             $("#uv_index").text("Not available");
         }     
     });
@@ -230,15 +256,16 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
         method: "GET",
         success: get5DayForecastData,
         error: function() {
-          $("#forecast").html("<h4>Five day forecast is not available.");
+          $("#forecast-heading").text("5 Day Forecast is not available");
 
           var cityExists = checkForDuplicate(city_name);
 
           if (cityExists === false) {
             addSearchHistoryListItem(city_name);
           }
-
+          citiesData.push(cityDataObj);
           setData(city_name, cityDataObj);
+          setData("active", city);
         }  
     });
 
@@ -246,7 +273,9 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
 
 function get5DayForecastData(response) {
 
-  var forecastUpdateList = response.list;
+          $("#forecast-heading").text("5 Day Forecast");
+
+          var forecastUpdateList = response.list;
 
           console.log("forecast: ", forecastUpdateList);
 
@@ -301,12 +330,16 @@ function get5DayForecastData(response) {
 
           var city = cityDataObj["name"];
 
+          //check if the search term was previously entered:
           var cityExists = checkForDuplicate(city);
 
+          //if the search term was not entered, add it to the search history list:
           if (cityExists === false) {
             addSearchHistoryListItem(city);
           }
+          //when all the data is displayed successfully, save the data to local storage:
           setData(city, cityDataObj);
+          setData("active", city);
           citiesData.push(cityDataObj);
 
 }
@@ -325,7 +358,6 @@ function addTodaysForecast(name, date, src, alt, temp, hum, wind_speed, uv_index
 }
 
 function addForecastTile(date, src, alt, temp, hum) {
-
   $("#forecast-tiles").append('<div class="col-lg-3 col-md-4 col-sm-6">' +
                                 '<div class="card">' +
                                     '<div class="card-body">' +
