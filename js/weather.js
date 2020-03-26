@@ -171,6 +171,9 @@ function displaySearchHistoryItem(cityName) {
         case 'uv_index':
           var uv_index = cityDataObj[property];
         break;
+        case 'uv_scale_color':
+          var uv_scale_color = cityDataObj[property];
+        break;
         default:
           var fdate = cityDataObj[property].date;
           var fimg = cityDataObj[property].img;
@@ -182,7 +185,7 @@ function displaySearchHistoryItem(cityName) {
       }
     }
   }
-  addTodaysForecast(name, date, img, alt, temp, hum, wind_speed, uv_index);
+  addTodaysForecast(name, date, img, alt, temp, hum, wind_speed, uv_index, uv_scale_color);
 }
 
 function setTodaysForecast(response) {
@@ -235,8 +238,10 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
         success: function(response) {
           console.log("UV Index: ", response);
           var uv_index = response.value;
+          var uv_scale_color = getUVScaleColor(uv_index);
           cityDataObj["uv_index"] = uv_index;
-          getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index);
+          cityDataObj["uv_scale_color"] = uv_scale_color;
+          getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index, uv_scale_color);
         },
         error: function() {
             //UV index is not available:
@@ -245,9 +250,9 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
     });
 }
 
-function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index) {
+function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index, uv_scale_color) {
 
-  addTodaysForecast(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index);
+  addTodaysForecast(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index, uv_scale_color);
 
     var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + city_name + "&units=Imperial&appid=" + API_KEY;
 
@@ -344,14 +349,14 @@ function get5DayForecastData(response) {
 
 }
 
-function addTodaysForecast(name, date, src, alt, temp, hum, wind_speed, uv_index) {
+function addTodaysForecast(name, date, src, alt, temp, hum, wind_speed, uv_index, uv_scale_color) {
     $("#forecast-today").html('<div class="card">' +
                                 '<div class="card-body">' +
-                                  '<h3 class="card-title"><span id="name">' + name + '</span> <span id="date">' + date + '</span><img id="weather-img" src="' + src + '" alt="' + alt + '"></h3>' +
+                                  '<h3 class="card-title"><span id="name">' + name + '</span> <span id="date">' + date + '</span><img id="weather-img" title="' + alt + '" src="' + src + '" alt="' + alt + '"></h3>' +
                                   '<p class="card-subtitle mb-2 text-muted">Temperature: <span id="temperature">' + temp + '</span>°F</p>' +
                                   '<p class="card-subtitle mb-2 text-muted">Humidity: <span id="humidity">' + hum + '</span>%</p>' +
                                   '<p class="card-subtitle mb-2 text-muted">Wind Speed: <span id="wind_speed">' + wind_speed + '</span> MPH</p>' +
-                                  '<p class="card-subtitle mb-2 text-muted">UV Index: <span class="badge badge-danger" id="uv_index">' + uv_index + '</span></p>' +
+                                  '<p class="card-subtitle mb-2 text-muted">UV Index: <span class="badge badge-' + uv_scale_color + '" title="' + uv_scale_color + '" id="uv_index">' + uv_index + '</span></p>' +
                                 '</div>' +
                               '</div>');
                            
@@ -362,7 +367,7 @@ function addForecastTile(date, src, alt, temp, hum) {
                                 '<div class="card">' +
                                     '<div class="card-body">' +
                                       '<h5 class="card-title forecast-date">' + date + '</h5>' +
-                                      '<img id="weather-img" width="30" src="' + src + '" alt="' + alt + '">' +
+                                      '<img id="weather-img" width="30" title="' + alt + '" src="' + src + '" alt="' + alt + '">' +
                                       '<p class="card-text">Temp: <span class="forecast-temp">' + temp + '</span>&deg;F</p>' +
                                       '<p class="card-text">Humidity: <span class="forecast-hum">' + hum +'</span>%</p>' +
                                     '</div>' +
@@ -396,6 +401,36 @@ function getWeatherSrc(weather) {
   }
 
   return weatherSrc;
+
+}
+
+function getUVScaleColor(uv_index) {
+
+
+  var uvNum = parseFloat(uv_index);
+
+  console.log("UV Index: " + uvNum);
+
+  var uv_scale_color;
+
+  if (uvNum >= 8) {
+    console.log("UV index is dangerous");
+    uv_scale_color = 'danger';
+  }
+  else if (uvNum >= 6) {
+    console.log("UV index is high");
+    uv_scale_color = 'high';
+  }
+  else if (uvNum >= 3) {
+    console.log("UV index is moderate");
+    uv_scale_color = 'moderate';
+  }
+  else {
+    console.log("UV index is light");
+    uv_scale_color = 'light';
+  }
+
+  return uv_scale_color;
 
 }
 

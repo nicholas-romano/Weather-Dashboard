@@ -48,6 +48,28 @@ p.card-subtitle {
     font-weight: normal;
 }
 
+.badge.badge-high {
+    padding: 10px;
+    font-weight: normal;
+    background-color: dar;
+    background-color: darkorange;
+    color: white;
+}
+
+.badge.badge-moderate {
+    padding: 10px;
+    font-weight: normal;
+    background-color: #EDF035;
+    color: black;
+}
+
+.badge.badge-light {
+    padding: 10px;
+    font-weight: normal;
+    background-color: #55C92B;
+    color: white;
+}
+
 #forecast {
     margin-top: 15px;
 }
