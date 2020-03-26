@@ -7,6 +7,7 @@ $( document ).ready(function() {
 
     var totalCities = window.localStorage.length;
 
+    //If there is local storage data, display it:
     if (totalCities > 0) {
 
       for (var i = 0; i < totalCities; i++) {
@@ -34,13 +35,7 @@ $( document ).ready(function() {
       });
     }
 
-    $(".search-history-list").on("click", function() {
-      //City name in search history list is selected:
-      $("#forecast-today").empty();
-      $("#forecast-tiles").empty();
-      var city = $(this).attr("id");
-      displaySearchHistoryItem(city);
-    });
+    $(".search-history-item").on("click", handleSearchItemSelect);
     
     $("#search-city-name").on("click", function() {
 
@@ -49,27 +44,56 @@ $( document ).ready(function() {
         $("#forecast-tiles").empty();
 
         var city = $("#city-input").val();
-
-        addSearchHistoryListItem(city);
         
         if (city === "") {
-            alert("Please enter a City name.")
+          alert("Please enter a City name.");
         }
         else {
             queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=Imperial&appid=' + API_KEY; 
-        }               
 
-        $.ajax({
-            url: queryURL,
-            method: "GET",
-            success: setTodaysForecast
-        });
+            $.ajax({
+              url: queryURL,
+              method: "GET",
+              success: setTodaysForecast,
+              error: function() {
+                $("#forecast-today").html('<h4>City name not found!</h4>')
+              }
+            });
+        }  
+
     });
 
 });
 
+function handleSearchItemSelect() {
+  //City name in search history list is selected:
+  $("#forecast-today").empty();
+  $("#forecast-tiles").empty();
+  var city = $(this).attr("id");
+  console.log("city: " + city);
+  displaySearchHistoryItem(city);
+}
+
+function checkForDuplicate(city) {
+
+  var totalCities = window.localStorage.length;
+
+  for (var i = 0; i < totalCities; i++) {
+
+    var cityData = getData(city);
+
+    if (cityData === null) {
+      return false;
+    }
+
+  }
+  return true;
+
+}
+
 function addSearchHistoryListItem(city) {
-  $("#search-history").append('<li id="' + city + '" class="list-group-item search-history-list">' + city + '</li>');
+  $("#search-history").append('<li id="' + city + '" class="list-group-item search-history-item">' + city + '</li>');
+  $(".search-history-item").on("click", handleSearchItemSelect);
 }
 
 function displaySearchHistoryItem(cityName) {
@@ -120,6 +144,7 @@ function displaySearchHistoryItem(cityName) {
 }
 
 function setTodaysForecast(response) {
+
   console.log(response);
 
   //get search query city name:
@@ -242,8 +267,14 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
             }
 
           } 
-          setData(city_name, cityDataObj);
 
+          var cityExists = checkForDuplicate(city_name);
+
+          if (cityExists === false) {
+            addSearchHistoryListItem(city_name);
+            setData(city_name, cityDataObj);
+            citiesData.push(cityDataObj);
+          }  
     });
 
 }

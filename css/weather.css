@@ -76,6 +76,6 @@ p.card-subtitle {
     display: none;
 }
 
-.search-history-list:hover {
+.search-history-item:hover {
     cursor: pointer;
 }
