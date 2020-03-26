@@ -78,20 +78,35 @@ function checkForDuplicate(city) {
 
   var totalCities = window.localStorage.length;
 
+  var cityExists = false;
+
   for (var i = 0; i < totalCities; i++) {
 
     var cityData = getData(city);
 
     if (cityData === null) {
-      return false;
+      cityExists = false;
+    }
+    else {
+      cityExists = true;
     }
 
   }
-  return true;
+  return cityExists;
 
 }
 
 function addSearchHistoryListItem(city) {
+
+  var totalCities = window.localStorage.length;
+
+  if (totalCities === 0) {
+    $('#search-section').append('<div class="card">' +
+      '<ul id="search-history" class="list-group list-group-flush">' +
+      '</ul>' +
+    '</div>');
+  }
+
   $("#search-history").append('<li id="' + city + '" class="list-group-item search-history-item">' + city + '</li>');
   $(".search-history-item").on("click", handleSearchItemSelect);
 }
@@ -199,7 +214,7 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
           getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index);
         },
         error: function() {
-            console.log("Could not return UV Index data.")
+            $("#uv_index").text("Not available");
         }     
     });
 }
@@ -212,10 +227,26 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
 
     $.ajax({
         url: queryURL,
-        method: "GET"
-      }).then(function(response) {
+        method: "GET",
+        success: get5DayForecastData,
+        error: function() {
+          $("#forecast").html("<h4>Five day forecast is not available.");
 
-          var forecastUpdateList = response.list;
+          var cityExists = checkForDuplicate(city_name);
+
+          if (cityExists === false) {
+            addSearchHistoryListItem(city_name);
+          }
+
+          setData(city_name, cityDataObj);
+        }  
+    });
+
+}
+
+function get5DayForecastData(response) {
+
+  var forecastUpdateList = response.list;
 
           console.log("forecast: ", forecastUpdateList);
 
@@ -268,14 +299,15 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
 
           } 
 
-          var cityExists = checkForDuplicate(city_name);
+          var city = cityDataObj["name"];
+
+          var cityExists = checkForDuplicate(city);
 
           if (cityExists === false) {
-            addSearchHistoryListItem(city_name);
-            setData(city_name, cityDataObj);
-            citiesData.push(cityDataObj);
-          }  
-    });
+            addSearchHistoryListItem(city);
+          }
+          setData(city, cityDataObj);
+          citiesData.push(cityDataObj);
 
 }
 
