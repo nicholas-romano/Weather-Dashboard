@@ -406,27 +406,25 @@ function getWeatherSrc(weather) {
 
 function getUVScaleColor(uv_index) {
 
-
+  //convert the uv index to a number:
   var uvNum = parseFloat(uv_index);
-
-  console.log("UV Index: " + uvNum);
 
   var uv_scale_color;
 
   if (uvNum >= 8) {
-    console.log("UV index is dangerous");
-    uv_scale_color = 'danger';
+    //UV index is dangerous
+    uv_scale_color = 'extreme';
   }
   else if (uvNum >= 6) {
-    console.log("UV index is high");
+    //UV index is high"
     uv_scale_color = 'high';
   }
   else if (uvNum >= 3) {
-    console.log("UV index is moderate");
+    //"UV index is moderate"
     uv_scale_color = 'moderate';
   }
   else {
-    console.log("UV index is light");
+    //"UV index is light"
     uv_scale_color = 'light';
   }
 

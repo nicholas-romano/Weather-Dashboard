@@ -43,15 +43,16 @@ p.card-subtitle {
     font-size: 11pt;
 }
 
-.badge.badge-danger {
+.badge.badge-extreme {
     padding: 10px;
     font-weight: normal;
+    background-color: #cc0000;
+    color: white;
 }
 
 .badge.badge-high {
     padding: 10px;
     font-weight: normal;
-    background-color: dar;
     background-color: darkorange;
     color: white;
 }
