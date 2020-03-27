@@ -178,51 +178,52 @@ function displaySearchHistoryItem(cityName) {
       //if it doesn't have 5 day forecast data, notify user:
       $("#forecast-heading").text("5 Day Forecast is not available");
     }
-  }
 
-  for (var property in cityDataObj){
-    if(cityDataObj.hasOwnProperty(property)){
-
-      switch(property) {
-        case 'name':
-          var name = cityDataObj[property];
-        break;
-        case 'date':
-          var date = cityDataObj[property];
-        break;
-        case 'img':
-          var img = cityDataObj[property];
-        break;
-        case 'imgAlt':
-          var alt = cityDataObj[property];
-        break;
-        case 'temperature':
-          var temp = cityDataObj[property];
-        break;
-        case 'humidity':
-          var hum = cityDataObj[property];
-        break;
-        case 'wind_speed':
-          var wind_speed = cityDataObj[property];
-        break;
-        case 'uv_index':
-          var uv_index = cityDataObj[property];
-        break;
-        case 'uv_scale_color':
-          var uv_scale_color = cityDataObj[property];
-        break;
-        default:
-          var fdate = cityDataObj[property].date;
-          var fimg = cityDataObj[property].img;
-          var falt = cityDataObj[property].imgAlt;
-          var ftemp = cityDataObj[property].temperature;
-          var fhum = cityDataObj[property].humidity;
-          addForecastTile(fdate, fimg, falt, ftemp, fhum);
-        break;
+    for (var property in cityDataObj){
+      if(cityDataObj.hasOwnProperty(property)){
+  
+        switch(property) {
+          case 'name':
+            var name = cityDataObj[property];
+          break;
+          case 'date':
+            var date = cityDataObj[property];
+          break;
+          case 'img':
+            var img = cityDataObj[property];
+          break;
+          case 'imgAlt':
+            var alt = cityDataObj[property];
+          break;
+          case 'temperature':
+            var temp = cityDataObj[property];
+          break;
+          case 'humidity':
+            var hum = cityDataObj[property];
+          break;
+          case 'wind_speed':
+            var wind_speed = cityDataObj[property];
+          break;
+          case 'uv_index':
+            var uv_index = cityDataObj[property];
+          break;
+          case 'uv_scale_color':
+            var uv_scale_color = cityDataObj[property];
+          break;
+          default:
+            var fdate = cityDataObj[property].date;
+            var fimg = cityDataObj[property].img;
+            var falt = cityDataObj[property].imgAlt;
+            var ftemp = cityDataObj[property].temperature;
+            var fhum = cityDataObj[property].humidity;
+            addForecastTile(fdate, fimg, falt, ftemp, fhum);
+          break;
+        }
       }
     }
+    addTodaysForecast(name, date, img, alt, temp, hum, wind_speed, uv_index, uv_scale_color);
   }
-  addTodaysForecast(name, date, img, alt, temp, hum, wind_speed, uv_index, uv_scale_color);
+
 }
 
 function setTodaysForecast(response) {
