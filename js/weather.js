@@ -5,6 +5,9 @@ var citiesData = [];
 
 $( document ).ready(function() {
 
+    //empty the input textbox and put focus on it when the page loads:
+    $("#city-input").val("").focus();
+
     var totalStorage = window.localStorage.length;
     var activeCity = getData("active");
 
@@ -57,8 +60,8 @@ $( document ).ready(function() {
         //get the input submitted:
         var city = $("#city-input").val();
 
-        //clear the input textbox after search button is clicked:
-        $("#city-input").val("");
+        //clear the input textbox after search button is clicked, and focus it:
+        $("#city-input").val("").focus();
 
         //validate the input:
         var validInput = validateInput(city);
