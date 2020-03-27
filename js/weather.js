@@ -56,17 +56,18 @@ $( document ).ready(function() {
         //get the input submitted:
         var city = $("#city-input").val();
 
+        //validate the input:
         var validInput = validateInput(city);
         
-        if (city === "") {
+        if (city === "") { //check if input is blank:
           $(".search").after('<label class="error">Please enter a city or state name.</label>');
         }
-        else if (validInput === false) {
-          $(".error").remove();
+        else if (validInput === false) { //check if input is valid:
+          $(".error").remove(); //remove old errors
           $(".search").after('<label class="error">Invalid input. Must be alphabetical</label>');
         }
         else  {
-          $(".error").remove();
+          $(".error").remove(); //remove all errors if input is valid:
         }
 
         if (city !== "" && validInput === true) {
@@ -126,9 +127,9 @@ function handleSearchItemSelect() {
 function checkForDuplicate(city) {
 
   var totalCities = window.localStorage.length;
-
   var cityExists = false;
 
+  //check all local storage data for a matching entry:
   for (var i = 0; i < totalCities; i++) {
 
     var cityData = getData(city);
@@ -149,7 +150,7 @@ function addSearchHistoryListItem(city) {
 
   var totalCities = window.localStorage.length;
 
-  if (totalCities === 0) {
+  if (totalCities === 0) { //add a new empty search item list if it's the first entry
     $('#search-section').append('<div class="card">' +
       '<ul id="search-history" class="list-group list-group-flush">' +
       '</ul>' +
@@ -163,6 +164,7 @@ function addSearchHistoryListItem(city) {
 
 function displaySearchHistoryItem(cityName) {
 
+  //set the selected city as "active":
   setData("active", cityName);
 
   cityDataObj = getData(cityName);
@@ -174,13 +176,13 @@ function displaySearchHistoryItem(cityName) {
     $("#forecast-heading").text("5 Day Forecast");
   }
   else {
+    //if it doesn't have 5 day forecast data, notify user:
     $("#forecast-heading").text("5 Day Forecast is not available");
   }
 
   for (var property in cityDataObj){
     if(cityDataObj.hasOwnProperty(property)){
 
-      //console.log(property + ": " + cityDataObj[property]);
       switch(property) {
         case 'name':
           var name = cityDataObj[property];
@@ -274,7 +276,9 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
           console.log("UV Index: ", response);
           var uv_index = response.value;
           var uv_scale_color = getUVScaleColor(uv_index);
+          //store uv index:
           cityDataObj["uv_index"] = uv_index;
+          //store uv scale color:
           cityDataObj["uv_scale_color"] = uv_scale_color;
           getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index, uv_scale_color);
         },
@@ -300,6 +304,7 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
 
           var cityExists = checkForDuplicate(city_name);
 
+          //check if city was already searched:
           if (cityExists === false) {
             addSearchHistoryListItem(city_name);
           }
@@ -353,6 +358,7 @@ function get5DayForecastData(response) {
 
               var forecastDateObj = {};
 
+              //store data received:
               forecastDateObj["date"] = forcastDate;
               forecastDateObj["img"] = weatherSrc;
               forecastDateObj["imgAlt"] = weatherAlt;
@@ -384,7 +390,7 @@ function get5DayForecastData(response) {
 
 }
 
-function addTodaysForecast(name, date, src, alt, temp, hum, wind_speed, uv_index, uv_scale_color) {
+function addTodaysForecast(name, date, src, alt, temp, hum, wind_speed, uv_index, uv_scale_color) { //add today's forecast:
     $("#forecast-today").html('<div class="card">' +
                                 '<div class="card-body">' +
                                   '<h3 class="card-title"><span id="name">' + name + '</span> <span id="date">' + date + '</span><img id="weather-img" title="' + alt + '" src="' + src + '" alt="' + alt + '"></h3>' +
@@ -397,7 +403,7 @@ function addTodaysForecast(name, date, src, alt, temp, hum, wind_speed, uv_index
                            
 }
 
-function addForecastTile(date, src, alt, temp, hum) {
+function addForecastTile(date, src, alt, temp, hum) { //add 5 day forecast tile:
   $("#forecast-tiles").append('<div class="col-lg-3 col-md-4 col-sm-6">' +
                                 '<div class="card">' +
                                     '<div class="card-body">' +
@@ -410,7 +416,7 @@ function addForecastTile(date, src, alt, temp, hum) {
                               '</div>');
 }
 
-function getWeatherSrc(weather) {
+function getWeatherSrc(weather) { //set weather icon image:
 
   var weatherSrc = "";
 
@@ -439,7 +445,7 @@ function getWeatherSrc(weather) {
 
 }
 
-function getUVScaleColor(uv_index) {
+function getUVScaleColor(uv_index) { //set uv scale color:
 
   //convert the uv index to a number:
   var uvNum = parseFloat(uv_index);
@@ -494,7 +500,7 @@ function getForcastDate(ts) {
 
 }
 
-function removeLeadingZeros(numberString) {
+function removeLeadingZeros(numberString) { //remove leading zeros from date:
 
   var fchar = numberString.substr(0, 1);
 
@@ -506,10 +512,10 @@ function removeLeadingZeros(numberString) {
 
 }
 
-function getData(key) {
+function getData(key) { //get data as an object
   return JSON.parse(window.localStorage.getItem(key));
 }
 
-function setData(key, data) {
+function setData(key, data) { //set data as a string
   window.localStorage.setItem(key, JSON.stringify(data));
 }
