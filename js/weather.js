@@ -57,6 +57,9 @@ $( document ).ready(function() {
         //get the input submitted:
         var city = $("#city-input").val();
 
+        //clear the input textbox after search button is clicked:
+        $("#city-input").val("");
+
         //validate the input:
         var validInput = validateInput(city);
         
