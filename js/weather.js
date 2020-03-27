@@ -168,14 +168,16 @@ function displaySearchHistoryItem(cityName) {
 
   cityDataObj = getData(cityName);
 
-  //check if the city data object has 5 day forecast data:
-  if (cityDataObj.hasOwnProperty("forecast_day_1")) {
-    //if it has 5 day forecast data, add the heading:
-    $("#forecast-heading").text("5 Day Forecast");
-  }
-  else {
-    //if it doesn't have 5 day forecast data, notify user:
-    $("#forecast-heading").text("5 Day Forecast is not available");
+  if (cityDataObj !== null) {
+    //check if the city data object has 5 day forecast data:
+    if (cityDataObj.hasOwnProperty("forecast_day_1")) {
+      //if it has 5 day forecast data, add the heading:
+      $("#forecast-heading").text("5 Day Forecast");
+    }
+    else {
+      //if it doesn't have 5 day forecast data, notify user:
+      $("#forecast-heading").text("5 Day Forecast is not available");
+    }
   }
 
   for (var property in cityDataObj){
