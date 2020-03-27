@@ -5,12 +5,13 @@ var citiesData = [];
 
 $( document ).ready(function() {
 
-    var totalCities = window.localStorage.length;
+    var totalStorage = window.localStorage.length;
+    var activeCity = getData("active");
 
-    //If there is local storage data, display it:
-    if (totalCities > 0) {
+    //If there is at least one searched city, display it:
+    if (activeCity !== null) {
 
-      for (var i = 0; i < totalCities; i++) {
+      for (var i = 0; i < totalStorage; i++) {
 
         //loop through all local storage keys:
         var cityName = window.localStorage.key(i);
@@ -85,11 +86,10 @@ $( document ).ready(function() {
         }
         else {
 
-          var totalCities = window.localStorage.length;
+          var activeCity = getData("active");
 
-          if (totalCities > 0) {
+          if (activeCity !== null) {
             //If input is invalid, display last searched city:
-            var activeCity = getData("active");
             displaySearchHistoryItem(activeCity);
           }
           else {
@@ -125,11 +125,11 @@ function handleSearchItemSelect() {
 
 function checkForDuplicate(city) {
 
-  var totalCities = window.localStorage.length;
+  var totalStorage = window.localStorage.length;
   var cityExists = false;
 
   //check all local storage data for a matching entry:
-  for (var i = 0; i < totalCities; i++) {
+  for (var i = 0; i < totalStorage; i++) {
 
     var cityData = getData(city);
 
@@ -147,9 +147,9 @@ function checkForDuplicate(city) {
 
 function addSearchHistoryListItem(city) {
 
-  var totalCities = window.localStorage.length;
+  var activeCity = getData("active");
 
-  if (totalCities === 0) { //add a new empty search item list if it's the first entry
+  if (activeCity === null)  { //add a new empty search item list if it's the first entry
     $('#search-section').append('<div class="card">' +
       '<ul id="search-history" class="list-group list-group-flush">' +
       '</ul>' +
@@ -298,6 +298,7 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
         method: "GET",
         success: get5DayForecastData,
         error: function() {
+          //five day forecast is not available, just display today's forecast:
           $("#forecast-heading").text("5 Day Forecast is not available");
 
           var cityExists = checkForDuplicate(city_name);
@@ -306,9 +307,12 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
           if (cityExists === false) {
             addSearchHistoryListItem(city_name);
           }
+          
+          //when all the data is displayed successfully, save the data to local storage:
           citiesData.push(cityDataObj);
           setData(city_name, cityDataObj);
           setData("active", city_name);
+          citiesData.push(cityDataObj);
         }  
     });
 
