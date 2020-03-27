@@ -433,6 +433,9 @@ function getWeatherSrc(weather) { //set weather icon image:
     case 'Rain':
       weatherSrc = "images/rain.png";
     break;
+    case 'Mist':
+      weatherSrc = "images/mist.png";
+    break;
     case 'Haze':
       weatherSrc = "images/foggy.png";
     break;
