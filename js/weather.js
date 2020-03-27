@@ -2,6 +2,7 @@ const API_KEY = '9f980e55608955868186255093b7d703';
 var queryURL = "";
 var cityDataObj = {};
 var citiesData = [];
+var tabIndex = 2;
 
 $( document ).ready(function() {
 
@@ -42,23 +43,30 @@ $( document ).ready(function() {
       //loop through each city's data object in the citiesData array and output
       //the city name into the search history list:                              
       $.each(citiesData, function(index, city) {
-
-        addSearchHistoryListItem(city.name);
+        tabIndex++;
+        addSearchHistoryListItem(city.name, tabIndex);
 
       });
     }
 
     //add a click event to each search history city in the list:
-    $(".search-history-item").on("click", handleSearchItemSelect);
-    
-    $("#search-city-name").submit(function(event) {
+    $(".search-history-item").on("click", handleSearchItemClick);
 
-        event.preventDefault();
+    $(".search-history-item").on("keyup", handleSearchItemEnter);
+
+    //add submit event to search button:
+    $("#search-city-name").on("submit", function(event) {
+      event.preventDefault();
+      //get the input submitted:
+      var city = $("#city-input").val();
+      searchCity(city);
+    });
+
+});
+
+function searchCity(city) {
 
         emptySearchDisplay();
-
-        //get the input submitted:
-        var city = $("#city-input").val();
 
         //clear the input textbox after search button is clicked, and focus it:
         $("#city-input").val("").focus();
@@ -103,10 +111,7 @@ $( document ).ready(function() {
                                       "<h5>Local weather information will display here.</h5>");
           }
         }  
-
-    });
-
-});
+}
 
 function validateInput(input) {
   var rmSp = input.trim();
@@ -122,11 +127,25 @@ function emptySearchDisplay() {
   $("#forecast-tiles").empty();
 }
 
-function handleSearchItemSelect() {
-  //City name in search history list is selected:
-  emptySearchDisplay();
-  var city = $(this).attr("id");
-  displaySearchHistoryItem(city);
+function handleSearchItemEnter(event) {
+  //City name in search history list is focused and enter key is pressed:
+  if (event.keyCode === 13) {
+    emptySearchDisplay();
+    event.preventDefault();
+    //get the input submitted:
+    var city = event.target.id;
+    displaySearchHistoryItem(city);
+  }
+
+}
+
+function handleSearchItemClick(event) {
+    //City name in search history list is clicked:
+    emptySearchDisplay();
+    event.preventDefault();
+    //get the input submitted:
+    var city = $(this).attr("id");
+    displaySearchHistoryItem(city);
 }
 
 function checkForDuplicate(city) {
@@ -151,7 +170,7 @@ function checkForDuplicate(city) {
 
 }
 
-function addSearchHistoryListItem(city) {
+function addSearchHistoryListItem(city, tabIndex) {
 
   var activeCity = getData("active");
 
@@ -162,9 +181,10 @@ function addSearchHistoryListItem(city) {
     '</div>');
   }
 
-  $("#search-history").append('<li id="' + city + '" class="list-group-item search-history-item">' + city + '</li>');
-  
-  $('.search-history-item').on("click", handleSearchItemSelect);
+  $("#search-history").append('<li id="' + city + '" tabindex="' + tabIndex + '" class="list-group-item search-history-item">' + city + '</li>');
+
+  $('.search-history-item').on("click", handleSearchItemClick);
+  $('.search-history-item').on("keyup", handleSearchItemEnter);
 }
 
 function displaySearchHistoryItem(cityName) {
@@ -236,6 +256,10 @@ function setTodaysForecast(response) {
 
   //get search query city name:
   var city_name = response.name;
+
+  city_name = replaceAbbr(city_name);
+
+  console.log("city name: " + city_name);
 
   //get today's date
   var todays_date = moment().format('l');
@@ -311,7 +335,8 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
 
           //check if city was already searched:
           if (cityExists === false) {
-            addSearchHistoryListItem(city_name);
+            tabIndex++;
+            addSearchHistoryListItem(city_name, tabIndex);
           }
           
           //when all the data is displayed successfully, save the data to local storage:
@@ -322,6 +347,26 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
         }  
     });
 
+}
+
+function replaceAbbr(city_name) {
+
+  //replace abbreviations:
+  var space = city_name.indexOf(" ");
+
+  space++;
+
+  var abbr = city_name.substring(0, space);
+
+  var strEnd = city_name.substring(space);
+
+  switch(abbr) {
+    case 'St ':
+      city_name = "Saint " + strEnd;
+    break;
+  }
+
+  return city_name;
 }
 
 function get5DayForecastData(response) {
@@ -387,7 +432,8 @@ function get5DayForecastData(response) {
 
           //if the search term was not entered, add it to the search history list:
           if (cityExists === false) {
-            addSearchHistoryListItem(city);
+            tabIndex++;
+            addSearchHistoryListItem(city, tabIndex);
           }
           //when all the data is displayed successfully, save the data to local storage:
           setData(city, cityDataObj);
