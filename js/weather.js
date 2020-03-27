@@ -30,8 +30,6 @@ $( document ).ready(function() {
       var activeCity = getData("active");
       displaySearchHistoryItem(activeCity);
 
-      console.log("citiesData: ", citiesData);
-
       $('#search-section').append('<div class="card">' +
                                     '<ul id="search-history" class="list-group list-group-flush">' +
                                     '</ul>' +
@@ -120,7 +118,6 @@ function handleSearchItemSelect() {
   //City name in search history list is selected:
   emptySearchDisplay();
   var city = $(this).attr("id");
-  console.log("city clicked: " + city);
   displaySearchHistoryItem(city);
 }
 
@@ -168,7 +165,6 @@ function displaySearchHistoryItem(cityName) {
   setData("active", cityName);
 
   cityDataObj = getData(cityName);
-  console.log("cityDataObj: ", cityDataObj);
 
   //check if the city data object has 5 day forecast data:
   if (cityDataObj.hasOwnProperty("forecast_day_1")) {
@@ -227,8 +223,6 @@ function displaySearchHistoryItem(cityName) {
 
 function setTodaysForecast(response) {
 
-  console.log(response);
-
   //get search query city name:
   var city_name = response.name;
 
@@ -273,7 +267,6 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
         url: queryURL,
         method: "GET",
         success: function(response) {
-          console.log("UV Index: ", response);
           var uv_index = response.value;
           var uv_scale_color = getUVScaleColor(uv_index);
           //store uv index:
@@ -321,8 +314,6 @@ function get5DayForecastData(response) {
           $("#forecast-heading").text("5 Day Forecast");
 
           var forecastUpdateList = response.list;
-
-          console.log("forecast: ", forecastUpdateList);
 
           var day = 1;
 
