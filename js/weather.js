@@ -47,7 +47,9 @@ $( document ).ready(function() {
     //add a click event to each search history city in the list:
     $(".search-history-item").on("click", handleSearchItemSelect);
     
-    $("#search-city-name").on("click", function() {
+    $("#search-city-name").submit(function(event) {
+
+        event.preventDefault();
 
         emptySearchDisplay();
 
