@@ -2,7 +2,7 @@ const API_KEY = '9f980e55608955868186255093b7d703';
 var queryURL = "";
 var cityDataObj = {};
 var citiesData = [];
-var tabIndex = 2;
+var tabIndex = 3;
 
 $( document ).ready(function() {
 
@@ -33,12 +33,13 @@ $( document ).ready(function() {
 
       //display last searched city:
       var activeCity = getData("active");
-      displaySearchHistoryItem(activeCity);
+      searchCity(activeCity);
 
       $('#search-section').append('<div class="card">' +
-                                    '<ul id="search-history" class="list-group list-group-flush">' +
-                                    '</ul>' +
-                                  '</div>');
+        '<button type="button" tabindex="3" class="btn btn-light" onclick="clearSearchHistoryClick();" onkeypress="clearSearchHistoryEnter();">Clear search history</button>' +
+        '<ul id="search-history" class="list-group list-group-flush">' +
+        '</ul>' +
+      '</div>');
 
       //loop through each city's data object in the citiesData array and output
       //the city name into the search history list:                              
@@ -49,74 +50,87 @@ $( document ).ready(function() {
       });
     }
 
-    //add a click event to each search history city in the list:
-    $(".search-history-item").on("click", handleSearchItemClick);
-
-    $(".search-history-item").on("keyup", handleSearchItemEnter);
-
     //add submit event to search button:
     $("#search-city-name").on("submit", function(event) {
       event.preventDefault();
       //get the input submitted:
       var city = $("#city-input").val();
-      searchCity(city);
+      checkForError(city);
     });
 
 });
 
+function checkForError(city) {
+  //clear the input textbox after search button is clicked, and focus it:
+  $("#city-input").val("").focus();
+
+  //validate the input:
+  var validInput = validateInput(city);
+  
+  if (city === "") { //check if input is blank:
+    $(".search").after('<label class="error">Please enter a city or state name.</label>');
+  }
+  else if (validInput === false) { //check if input is valid:
+    $(".error").remove(); //remove old errors
+    $(".search").after('<label class="error">Invalid input. Must be alphabetical</label>');
+  }
+  else  {
+    $(".error").remove(); //remove all errors if input is valid:
+  }
+
+  if (city !== "" && validInput === true) {
+    searchCity(city);
+  }
+  else {
+
+    var activeCity = getData("active");
+
+    if (activeCity !== null) {
+      //If input is invalid, display last searched city:
+      searchCity(activeCity);
+    }
+    else {
+      $("#forecast-today").html("<h5>Enter a city in the search box on the left and click the search button.</h5>" +
+                                "<h5>Local weather information will display here.</h5>");
+    }
+  }
+
+}
+
 function searchCity(city) {
 
-        emptySearchDisplay();
+  emptySearchDisplay();
 
-        //clear the input textbox after search button is clicked, and focus it:
-        $("#city-input").val("").focus();
+  queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=Imperial&appid=' + API_KEY; 
 
-        //validate the input:
-        var validInput = validateInput(city);
-        
-        if (city === "") { //check if input is blank:
-          $(".search").after('<label class="error">Please enter a city or state name.</label>');
-        }
-        else if (validInput === false) { //check if input is valid:
-          $(".error").remove(); //remove old errors
-          $(".search").after('<label class="error">Invalid input. Must be alphabetical</label>');
-        }
-        else  {
-          $(".error").remove(); //remove all errors if input is valid:
-        }
-
-        if (city !== "" && validInput === true) {
-            queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + '&units=Imperial&appid=' + API_KEY; 
-
-            $.ajax({
-              url: queryURL,
-              method: "GET",
-              success: setTodaysForecast,
-              error: function() {
-                //City not found in the database, output error:
-                $("#forecast-today").html('<h4>City name not found!</h4>')
-              }
-            });
-        }
-        else {
-
-          var activeCity = getData("active");
-
-          if (activeCity !== null) {
-            //If input is invalid, display last searched city:
-            displaySearchHistoryItem(activeCity);
-          }
-          else {
-            $("#forecast-today").html("<h5>Enter a city in the search box on the left and click the search button.</h5>" +
-                                      "<h5>Local weather information will display here.</h5>");
-          }
-        }  
+  $.ajax({
+    url: queryURL,
+    method: "GET",
+    success: setTodaysForecast,
+    error: function() {
+    //City not found in the database, output error:
+      $("#forecast-today").html('<h4>City name not found!</h4>')
+    }
+  });                 
+          
 }
 
 function validateInput(input) {
   var rmSp = input.trim();
   var result = rmSp.search(/^[A-Za-z\s]+$/); //check to make sure the input is alphabetical
   return (result === 0 ? true : false); //return true if it is alphabetical, false if not
+}
+
+function clearSearchHistoryClick() {
+  window.localStorage.clear();
+  location.reload();
+}
+
+function clearSearchHistoryEnter() {
+  if (window.event.key === "Enter") {
+    window.localStorage.clear();
+    location.reload();
+  }
 }
 
 function emptySearchDisplay() {
@@ -127,25 +141,17 @@ function emptySearchDisplay() {
   $("#forecast-tiles").empty();
 }
 
-function handleSearchItemEnter(event) {
-  //City name in search history list is focused and enter key is pressed:
-  if (event.keyCode === 13) {
-    emptySearchDisplay();
-    event.preventDefault();
+function handleSearchItemClick(id) {
+    //City name in search history list is clicked or focused:
     //get the input submitted:
-    var city = event.target.id;
-    displaySearchHistoryItem(city);
-  }
-
+    searchCity(id);
 }
 
-function handleSearchItemClick(event) {
-    //City name in search history list is clicked:
-    emptySearchDisplay();
-    event.preventDefault();
-    //get the input submitted:
-    var city = $(this).attr("id");
-    displaySearchHistoryItem(city);
+function handleSearchItemEnter(id) {
+  //City name in search history list is focused and enter button is clicked:
+  if (window.event.key === "Enter") {
+    searchCity(id);
+  }
 }
 
 function checkForDuplicate(city) {
@@ -176,79 +182,13 @@ function addSearchHistoryListItem(city, tabIndex) {
 
   if (activeCity === null)  { //add a new empty search item list if it's the first entry
     $('#search-section').append('<div class="card">' +
+      '<button type="button" tabindex="3" onclick="clearSearchHistoryClick();" onkeypress="clearSearchHistoryEnter();" class="btn btn-light">Clear search history</button>' +
       '<ul id="search-history" class="list-group list-group-flush">' +
       '</ul>' +
     '</div>');
   }
 
-  $("#search-history").append('<li id="' + city + '" tabindex="' + tabIndex + '" class="list-group-item search-history-item">' + city + '</li>');
-
-  $('.search-history-item').on("click", handleSearchItemClick);
-  $('.search-history-item').on("keyup", handleSearchItemEnter);
-}
-
-function displaySearchHistoryItem(cityName) {
-
-  //set the selected city as "active":
-  setData("active", cityName);
-
-  cityDataObj = getData(cityName);
-
-  if (cityDataObj !== null) {
-    //check if the city data object has 5 day forecast data:
-    if (cityDataObj.hasOwnProperty("forecast_day_1")) {
-      //if it has 5 day forecast data, add the heading:
-      $("#forecast-heading").text("5 Day Forecast");
-    }
-    else {
-      //if it doesn't have 5 day forecast data, notify user:
-      $("#forecast-heading").text("5 Day Forecast is not available");
-    }
-
-    for (var property in cityDataObj){
-      if(cityDataObj.hasOwnProperty(property)){
-  
-        switch(property) {
-          case 'name':
-            var name = cityDataObj[property];
-          break;
-          case 'date':
-            var date = cityDataObj[property];
-          break;
-          case 'img':
-            var img = cityDataObj[property];
-          break;
-          case 'imgAlt':
-            var alt = cityDataObj[property];
-          break;
-          case 'temperature':
-            var temp = cityDataObj[property];
-          break;
-          case 'humidity':
-            var hum = cityDataObj[property];
-          break;
-          case 'wind_speed':
-            var wind_speed = cityDataObj[property];
-          break;
-          case 'uv_index':
-            var uv_index = cityDataObj[property];
-          break;
-          case 'uv_scale_color':
-            var uv_scale_color = cityDataObj[property];
-          break;
-          default:
-            var fdate = cityDataObj[property].date;
-            var fimg = cityDataObj[property].img;
-            var falt = cityDataObj[property].imgAlt;
-            var ftemp = cityDataObj[property].temperature;
-            var fhum = cityDataObj[property].humidity;
-            addForecastTile(fdate, fimg, falt, ftemp, fhum);
-          break;
-        }
-      }
-    }
-    addTodaysForecast(name, date, img, alt, temp, hum, wind_speed, uv_index, uv_scale_color);
-  }
+  $("#search-history").append('<li id="' + city + '" onclick="handleSearchItemClick(id);" onkeypress="handleSearchItemEnter(id);" tabindex="' + tabIndex + '" class="list-group-item search-history-item">' + city + '</li>');
 
 }
 
@@ -278,12 +218,6 @@ function setTodaysForecast(response) {
   var wind_speed = response.wind.speed;
 
   cityDataObj["name"] = city_name;
-  cityDataObj["date"] = todays_date;
-  cityDataObj["img"] = weatherSrc;
-  cityDataObj["imgAlt"] = weatherAlt;
-  cityDataObj["temperature"] = temp;
-  cityDataObj["humidity"] = hum;
-  cityDataObj["wind_speed"] = wind_speed;
 
   //get coordinates:
   var lat = response.coord.lat;
@@ -302,17 +236,16 @@ function setUVIndex(lat, lon, cityDataObj, city_name, todays_date, weatherSrc, w
         url: queryURL,
         method: "GET",
         success: function(response) {
+          //get uv index number:
           var uv_index = response.value;
+          //get uv color:
           var uv_scale_color = getUVScaleColor(uv_index);
-          //store uv index:
-          cityDataObj["uv_index"] = uv_index;
-          //store uv scale color:
-          cityDataObj["uv_scale_color"] = uv_scale_color;
           getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index, uv_scale_color);
         },
         error: function() {
             //UV index is not available:
             $("#uv_index").text("Not available");
+            getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum, wind_speed, uv_index, uv_scale_color);
         }     
     });
 }
@@ -340,10 +273,8 @@ function getNext5Days(city_name, todays_date, weatherSrc, weatherAlt, temp, hum,
           }
           
           //when all the data is displayed successfully, save the data to local storage:
-          citiesData.push(cityDataObj);
           setData(city_name, cityDataObj);
           setData("active", city_name);
-          citiesData.push(cityDataObj);
         }  
     });
 
@@ -405,19 +336,6 @@ function get5DayForecastData(response) {
 
               addForecastTile(forcastDate, weatherSrc, weatherAlt, temp, hum);
 
-              var forecastDay = "forecast_day_" + day;
-
-              var forecastDateObj = {};
-
-              //store data received:
-              forecastDateObj["date"] = forcastDate;
-              forecastDateObj["img"] = weatherSrc;
-              forecastDateObj["imgAlt"] = weatherAlt;
-              forecastDateObj["temperature"] = temp;
-              forecastDateObj["humidity"] = hum;
-
-              cityDataObj[forecastDay] = forecastDateObj;
-
               //After the forecast day has been added, increment the day:
               day++;
 
@@ -438,7 +356,6 @@ function get5DayForecastData(response) {
           //when all the data is displayed successfully, save the data to local storage:
           setData(city, cityDataObj);
           setData("active", city);
-          citiesData.push(cityDataObj);
 
 }
 
