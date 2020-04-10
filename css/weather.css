@@ -104,3 +104,7 @@ p.card-subtitle {
     color: red;
     font-size: 8pt;
 }
+
+.btn.btn-light {
+    background-color: #e5e5e5;
+}
