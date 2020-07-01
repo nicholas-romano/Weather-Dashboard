@@ -1,46 +1,29 @@
-# 06 Server-Side APIs: Weather Dashboard
+# Weather-Dashboard 
 
-Developers are often tasked with retrieving data from another application's API and using it in the context of their own. Third-party APIs allow developers to access their data and functionality by making requests with specific parameters to a URL. Your challenge is to build a weather dashboard that will run in the browser and feature dynamically updated HTML and CSS.
+![Weather-Dashboard](/images/Weather-Dashboard.png) 
 
-Use the [OpenWeather API](https://openweathermap.org/api) to retrieve weather data for cities. The documentation includes a section called "How to start" that will provide basic setup and usage instructions. Use `localStorage` to store any persistent data.
+## Description 
+This application gives the user the ability to search for current and five-day forecast weather data by city name using the Open Weather Map API [https://openweathermap.org/](https://openweathermap.org/)
 
-## User Story
+## Table of Contents 
+* [Usage](#usage) 
+* [Third Party Contributors](#third-party-contributors) 
+* [License](#license) 
+* [Questions](#questions) 
+ 
+## Usage 
+1.  When the application is launched in the browser, the user can then search for weather data based on city name by typing the name in the box and clicking the magnifying glass button.  ![Weather-Dashboard-Initial-Page](/images/Weather-Dashboard-Initial-Page.png)  
+2.  After a city is searched on, if a matching city is found from the API request, that city search item will be saved in a list on the left side. That same search can be made again simply by clicking on that saved search item. The “Clear search history” button is displayed when at least one saved search item is displayed. Clicking this button removes all previously saved search cities. ![Weather-Dashboard-Search-Item](/images/Weather-Dashboard-Search-Item.png)  
+3.  That city’s single day forecast is displayed in the main content area on the right including city name, date, weather icon, temperature, humidity, wind speed, and UV index level. The index level is color-coded based on the severity (green is low, yellow is light, orange is high, red is extreme). images/ ![Weather-Dashboard-Current-Day](/Weather-Dashboard-Current-Day.png)  
+4.  Just below that is the Five-Day Forecast which displays the weather forecast at the current time for the next five days including the date, weather icon, temperature, and humidity percentage. For example, if it is currently 3pm, it will display the weather forecasted for 3pm tomorrow, 3pm for the next day, and so forth for five days. ![Weather-Dashboard-Five-Day-Forecast](/images/Weather-Dashboard-Five-Day-Forecast.png) 
+5.  The saved searches are stored in the browser’s local storage, so when the browser is closed and re-opened again or the browser is refreshed, all of the previously searched for cities will display back on the page with the last searched city displayed as the active one.  
 
-```
-AS A traveler
-I WANT to see the weather outlook for multiple cities
-SO THAT I can plan a trip accordingly
-```
+## Third Party Contributors 
+Open Weather Map API [openweathermap.org/](https://openweathermap.org/)supplied the weather data.  
+## License 
+There is not a license for this application. 
 
-## Acceptance Criteria
+## Questions 
+![GitHub Profile Image](https://avatars.githubusercontent.com/u/6642173?) 
 
-```
-GIVEN a weather dashboard with form inputs
-WHEN I search for a city
-THEN I am presented with current and future conditions for that city and that city is added to the search history
-WHEN I view current weather conditions for that city
-THEN I am presented with the city name, the date, an icon representation of weather conditions, the temperature, the humidity, the wind speed, and the UV index
-WHEN I view the UV index
-THEN I am presented with a color that indicates whether the conditions are favorable, moderate, or severe
-WHEN I view future weather conditions for that city
-THEN I am presented with a 5-day forecast that displays the date, an icon representation of weather conditions, the temperature, and the humidity
-WHEN I click on a city in the search history
-THEN I am again presented with current and future conditions for that city
-WHEN I open the weather dashboard
-THEN I am presented with the last searched city forecast
-```
-
-The following image demonstrates the application functionality:
-
-![weather dashboard demo](./Assets/06-server-side-apis-homework-demo.png)
-
-## Review
-
-You are required to submit the following for review:
-
-* The URL of the deployed application.
-
-* The URL of the GitHub repository. Give the repository a unique name and include a README describing the project.
-
-- - -
-© 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
+ njr7romano@yahoo.com
